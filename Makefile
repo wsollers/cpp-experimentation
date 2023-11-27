@@ -1,3 +1,6 @@
+#
+# These are the libraries that are needed to work with Vulkan 
+#
 getDependencies:
 	@echo "Getting dependencies..."
 	sudo apt install vulkan-tools
