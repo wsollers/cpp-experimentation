@@ -10,8 +10,13 @@ getDependencies:
 	sudo apt install libglm-dev
 	# TODO: Need google glslc compiler tools for vulkan
 	sudo apt install libxxf86vm-dev libxi-dev
+
 build:
 	echo "Building..."
 	cd VulkanTest && make
+
 check:
 	echo "Checking..."
+
+distcheck:
+	echo "Dist Checking..."
