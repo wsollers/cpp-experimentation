@@ -19,7 +19,7 @@ build: clean
 	echo "Building..."
 	cd VulkanTest && make
 
-build-codeql: clean
+build-codeql: clean getDependencies
 	echo "Building CodeQL..."
 	cd VulkanTest && make build
 
