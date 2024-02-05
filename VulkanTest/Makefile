@@ -17,3 +17,6 @@ test: VulkanTest
 
 clean:
 	rm -f VulkanTest
+
+build: VulkanTest
+
