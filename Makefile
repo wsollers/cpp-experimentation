@@ -15,11 +15,11 @@ clean:
 	echo "Cleaning..."
 	cd VulkanTest && make clean 
 
-build:
+build: clean
 	echo "Building..."
 	cd VulkanTest && make
 
-build-codeql: getDependencies
+build-codeql: clean
 	echo "Building CodeQL..."
 	cd VulkanTest && make build
 
