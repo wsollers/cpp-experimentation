@@ -15,12 +15,12 @@ jobs:
         id: msdo
         #specify config file below
         #with: null
-      - name: Upload alerts to Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ steps.msdo.outputs.sarifFile }}
-      #- name: Upload alerts file as a workflow artifact
-      #  uses: actions/upload-artifact@v3
+      #- name: Upload alerts to Security tab
+      #  uses: github/codeql-action/upload-sarif@v2
       #  with:
-      #    name: alerts
-      #    path: ${{ steps.msdo.outputs.sarifFile }}
+      #    sarif_file: ${{ steps.msdo.outputs.sarifFile }}
+      - name: Upload alerts file as a workflow artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: alerts
+          path: ${{ steps.msdo.outputs.sarifFile }}
