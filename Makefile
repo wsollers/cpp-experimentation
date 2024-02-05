@@ -11,9 +11,17 @@ getDependencies:
 	# TODO: Need google glslc compiler tools for vulkan
 	sudo apt install libxxf86vm-dev libxi-dev
 
+clean:
+	echo "Cleaning..."
+	cd VulkanTest && make clean 
+
 build:
 	echo "Building..."
 	cd VulkanTest && make
+
+build-codeql: getDependencies
+	echo "Building CodeQL..."
+	cd VulkanTest && make build
 
 check:
 	echo "Checking..."

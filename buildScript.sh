@@ -1,4 +1,4 @@
 #!/bin/sh
 
 #Build components
-make build
+make build-codeql
