@@ -50,6 +50,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        
     - name: Manual build
       run: |
          echo "Run, Build Application using script"
