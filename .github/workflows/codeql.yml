@@ -50,8 +50,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-
-     - run: |
+    - name: Manual build
+      run: |
          echo "Run, Build Application using script"
          ./location_of_script_within_repo/buildscript.sh
 
