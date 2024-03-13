@@ -9,18 +9,18 @@ jobs:
     name: Microsoft Security DevOps Analysis
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run Microsoft Security DevOps Analysis
         uses: microsoft/security-devops-action@latest
         id: msdo
         #specify config file below
         #with: null
       #- name: Upload alerts to Security tab
-      #  uses: github/codeql-action/upload-sarif@v2
+      #  uses: github/codeql-action/upload-sarif@v3
       #  with:
       #    sarif_file: ${{ steps.msdo.outputs.sarifFile }}
       - name: Upload alerts file as a workflow artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: alerts.msdo
           path: ${{ steps.msdo.outputs.sarifFile }}
