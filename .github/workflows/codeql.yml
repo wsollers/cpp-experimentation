@@ -69,4 +69,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
          name: codeql.results
-         path: results/cpp.sarif
+         path: /home/runner/work/cpp-experimentation/results/cpp.sarif
