@@ -32,3 +32,5 @@
 *.app
 
 VulkanTest/VulkanTest
+
+VulkanTest/vulkan-example
