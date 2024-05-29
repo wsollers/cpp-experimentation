@@ -19,6 +19,18 @@ vulkan-example: #vulkan-example.cpp
 	@echo "CFLAGS: $(CFLAGS)"
 	$(CURRENT_COMPILER) $(CFLAGS) -o vulkan-example vulkan-example.cpp $(LDFLAGS)
 
+vulkan-test2: #vulkan-test2.cpp
+	@echo "Compiling vulkan-test2.cpp"
+	@echo "Compiling with $(CURRENT_COMPILER)"
+	@echo "CFLAGS: $(CFLAGS)"
+	$(CURRENT_COMPILER) $(CFLAGS) -o vulkan-test2 vulkan-test2.cpp $(LDFLAGS)
+
+hello-triangle: #hello-triangle.cpp
+	@echo "Compiling hello-triangle.cpp"
+	@echo "Compiling with $(CURRENT_COMPILER)"
+	@echo "CFLAGS: $(CFLAGS)"
+	$(CURRENT_COMPILER) $(CFLAGS) -o hello-triangle hello-triangle.cpp $(LDFLAGS)
+
 .PHONY: test clean
 
 test: VulkanTest
@@ -27,7 +39,7 @@ test: VulkanTest
 	./vulkan-example
 
 clean:
-	rm -f VulkanTest vulkan-example
+	rm -f VulkanTest vulkan-example vulkan-test2 hello-triangle
 
-build: VulkanTest vulkan-example
+build: VulkanTest vulkan-example vulkan-test2 hello-triangle
 

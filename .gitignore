@@ -34,3 +34,5 @@
 VulkanTest/VulkanTest
 
 VulkanTest/vulkan-example
+
+VulkanTest/hello-triangle
