@@ -1,6 +1,12 @@
 CFLAGS=-std=c++17 -O2
 
-LDFLAGS=-ggdb -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
+# Debugging flags
+NDEBUG=1
+
+# Logging flags
+VERBOSE_LOGGING=1
+
+LDFLAGS=-ggdb -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi -D VERBOSE_LOGGING=$(VERBOSE_LOGGING) 
 
 GCC=g++
 CLANG=clang++
@@ -31,6 +37,12 @@ hello-triangle: #hello-triangle.cpp
 	@echo "CFLAGS: $(CFLAGS)"
 	$(CURRENT_COMPILER) $(CFLAGS) -o hello-triangle hello-triangle.cpp $(LDFLAGS)
 
+02_validation_layers: #
+	@echo "Compiling 02_validation_layers.cpp"
+	@echo "Compiling with $(CURRENT_COMPILER)"
+	@echo "CFLAGS: $(CFLAGS)"
+	$(CURRENT_COMPILER) $(CFLAGS) -o validation-layers 02_validation_layers.cpp $(LDFLAGS)
+
 .PHONY: test clean
 
 test: VulkanTest
@@ -39,7 +51,7 @@ test: VulkanTest
 	./vulkan-example
 
 clean:
-	rm -f VulkanTest vulkan-example vulkan-test2 hello-triangle
+	rm -f VulkanTest vulkan-example vulkan-test2 hello-triangle validation-layers
 
-build: VulkanTest vulkan-example vulkan-test2 hello-triangle
+build: VulkanTest vulkan-example vulkan-test2 hello-triangle validation-layers
 
