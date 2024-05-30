@@ -153,13 +153,14 @@ class HelloTriangleApplication {
       throw std::runtime_error(
           "validation layers requested, but not available!");
     }
+
+#if VERBOSE_LOGGING
     // Lets get all the extensions that are available
     uint32_t extensionCount = 0;
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
     std::vector<VkExtensionProperties> extensions(extensionCount);
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount,
                                            extensions.data());
-#if VERBOSE_LOGGING
     std::cout << "Available extensions:\n";
     for (const auto& extension : extensions) {
       std::cout << '\t' << extension.extensionName << '\n';
@@ -211,9 +212,6 @@ class HelloTriangleApplication {
     }
 #endif
 
-    createInfo.enabledExtensionCount = glfwExtensionCount;
-    createInfo.ppEnabledExtensionNames = glfwExtensions;
-
     // Pattern to create vulkan object is create struct, *allocator,  address to
     // store object in VkResult result = vkCreateInstance(&createInfo, nullptr,
     // &instance);
@@ -232,7 +230,7 @@ class HelloTriangleApplication {
   void cleanup() {
     // Destroy the debug messenger
     if (enableValidationLayers) {
-      // DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+      DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
     }
 
     vkDestroyInstance(instance, nullptr);
@@ -257,8 +255,7 @@ class HelloTriangleApplication {
     return VK_FALSE;
   }
 
-  void populateDebugMessengerCreateInfo(
-      VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
+  void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
     createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     createInfo.messageSeverity =
