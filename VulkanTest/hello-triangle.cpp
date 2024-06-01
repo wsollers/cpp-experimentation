@@ -1,3 +1,4 @@
+#include <vulkan/vulkan_core.h>
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -114,6 +115,7 @@ class HelloTriangleApplication {
   GLFWwindow* window = nullptr;
   VkInstance instance = VK_NULL_HANDLE;
   VkDebugUtilsMessengerEXT debugMessenger;
+  VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
   void initWindow() {
     glfwInit();
@@ -124,9 +126,89 @@ class HelloTriangleApplication {
     window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
   }
 
+  bool isDeviceSuitable(VkPhysicalDevice device) {
+
+    VkPhysicalDeviceProperties deviceProperties;
+    VkPhysicalDeviceFeatures deviceFeatures;
+
+    vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+    std::cout << "Checking device suitability" << std::endl;
+#if VERBOSE_LOGGING
+    std::cout << "Device properties" << std::endl;
+    std::cout << "Device name: " << deviceProperties.deviceName << std::endl;
+    std::cout << '\t' << "Device type: " << deviceProperties.deviceType << std::endl;
+    std::cout << '\t' << "API version: " << deviceProperties.apiVersion << std::endl;
+    std::cout << '\t' << "Driver version: " << deviceProperties.driverVersion << std::endl;
+    std::cout << '\t' << "Vendor ID: " << deviceProperties.vendorID << std::endl;
+    std::cout << '\t' << "Device ID: " << deviceProperties.deviceID << std::endl;
+#endif
+
+
+    vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+#if VERBOSE_LOGGING
+    std::cout  << "\t\t" << "Device features:" << std::endl;
+    std::cout  << "\t\t\t" << "Geometry shader support: " << deviceFeatures.geometryShader << std::endl;
+    std::cout  << "\t\t\t" << "Tessellation shader support: " << deviceFeatures.tessellationShader << std::endl;
+    std::cout  << "\t\t\t" << "Sampler anisotropy support: " << deviceFeatures.samplerAnisotropy << std::endl;
+    std::cout  << "\t\t\t" << "Texture compression BC support: " << deviceFeatures.textureCompressionBC << std::endl;
+    std::cout  << "\t\t\t" << "Texture compression ASTC_LDR support: " << deviceFeatures.textureCompressionASTC_LDR << std::endl;
+    std::cout  << "\t\t\t" << "Texture compression ETC2 support: " << deviceFeatures.textureCompressionETC2 << std::endl;
+    std::cout  << "\t\t\t" << "Shader storage image extended formats support: " << deviceFeatures.shaderStorageImageExtendedFormats << std::endl;
+    std::cout  << "\t\t\t" << "Shader storage image read without format support: " << deviceFeatures.shaderStorageImageReadWithoutFormat << std::endl;
+    std::cout  << "\t\t\t" << "Shader storage image write without format support: " << deviceFeatures.shaderStorageImageWriteWithoutFormat << std::endl;
+    std::cout  << "\t\t\t" << "Shader uniform buffer array dynamic indexing support: " << deviceFeatures.shaderUniformBufferArrayDynamicIndexing << std::endl;
+    std::cout  << "\t\t\t" << "Shader sampled image array dynamic indexing support: " << deviceFeatures.shaderSampledImageArrayDynamicIndexing << std::endl;
+    std::cout  << "\t\t\t" << "Shader storage buffer array dynamic indexing support: " << deviceFeatures.shaderStorageBufferArrayDynamicIndexing << std::endl;
+    std::cout  << "\t\t\t" << "Shader storage image array dynamic indexing support: " << deviceFeatures.shaderStorageImageArrayDynamicIndexing << std::endl;
+    std::cout  << "\t\t\t" << "Shader clip distance support: " << deviceFeatures.shaderClipDistance << std::endl;
+    std::cout  << "\t\t\t" << "Shader cull distance support: " << deviceFeatures.shaderCullDistance << std::endl;
+    std::cout  << "\t\t\t" << "Shader float64 support: " << deviceFeatures.shaderFloat64 << std::endl;
+    std::cout  << "\t\t\t" << "Shader int64 support: " << deviceFeatures.shaderInt64 << std::endl;
+    std::cout  << "\t\t\t" << "Shader int16 support: " << deviceFeatures.shaderInt16 << std::endl;
+    std::cout  << "\t\t\t" << "Shader resource residency support: " << deviceFeatures.shaderResourceResidency << std::endl;
+#endif
+
+    /*
+     *
+     * This is where we would check for device suitability
+     * For example:
+     *
+     * return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
+     *     deviceFeatures.geometryShader;
+     *
+     * We will just return true for now
+     */
+    return true;
+  }
+
+  void pickPhysicalDevice() {
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+    if ( deviceCount == 0) {
+      throw std::runtime_error("failed to find GPUs with Vulkan support!");
+    }
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+    std::cout << "Devices found: " << deviceCount << std::endl;
+    for (const auto& device : devices) {
+      if (isDeviceSuitable(device)) {
+        physicalDevice = device;
+        break;
+      }
+    }
+    if (physicalDevice == VK_NULL_HANDLE) {
+      throw std::runtime_error("failed to find a suitable GPU!");
+    }
+
+    
+  }
+
+
   void initVulkan() {
     createInstance();
     setupDebugMessenger();
+    pickPhysicalDevice();
   }
 
   void setupDebugMessenger() {
