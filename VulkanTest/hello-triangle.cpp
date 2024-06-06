@@ -1,4 +1,6 @@
 #include <vulkan/vulkan_core.h>
+
+#include <cstdint>
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -29,6 +31,13 @@ const uint32_t HEIGHT = 600;
 
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"};
+
+struct QueueFamilyIndices {
+  std::optional<uint32_t> graphicsFamily;
+  bool isComplete() { 
+    return graphicsFamily.has_value();
+  }
+};
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -127,7 +136,6 @@ class HelloTriangleApplication {
   }
 
   bool isDeviceSuitable(VkPhysicalDevice device) {
-
     VkPhysicalDeviceProperties deviceProperties;
     VkPhysicalDeviceFeatures deviceFeatures;
 
@@ -137,36 +145,85 @@ class HelloTriangleApplication {
 #if VERBOSE_LOGGING
     std::cout << "Device properties" << std::endl;
     std::cout << "Device name: " << deviceProperties.deviceName << std::endl;
-    std::cout << '\t' << "Device type: " << deviceProperties.deviceType << std::endl;
-    std::cout << '\t' << "API version: " << deviceProperties.apiVersion << std::endl;
-    std::cout << '\t' << "Driver version: " << deviceProperties.driverVersion << std::endl;
-    std::cout << '\t' << "Vendor ID: " << deviceProperties.vendorID << std::endl;
-    std::cout << '\t' << "Device ID: " << deviceProperties.deviceID << std::endl;
+    std::cout << '\t' << "Device type: " << deviceProperties.deviceType
+              << std::endl;
+    std::cout << '\t' << "API version: " << deviceProperties.apiVersion
+              << std::endl;
+    std::cout << '\t' << "Driver version: " << deviceProperties.driverVersion
+              << std::endl;
+    std::cout << '\t' << "Vendor ID: " << deviceProperties.vendorID
+              << std::endl;
+    std::cout << '\t' << "Device ID: " << deviceProperties.deviceID
+              << std::endl;
 #endif
-
 
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 #if VERBOSE_LOGGING
-    std::cout  << "\t\t" << "Device features:" << std::endl;
-    std::cout  << "\t\t\t" << "Geometry shader support: " << deviceFeatures.geometryShader << std::endl;
-    std::cout  << "\t\t\t" << "Tessellation shader support: " << deviceFeatures.tessellationShader << std::endl;
-    std::cout  << "\t\t\t" << "Sampler anisotropy support: " << deviceFeatures.samplerAnisotropy << std::endl;
-    std::cout  << "\t\t\t" << "Texture compression BC support: " << deviceFeatures.textureCompressionBC << std::endl;
-    std::cout  << "\t\t\t" << "Texture compression ASTC_LDR support: " << deviceFeatures.textureCompressionASTC_LDR << std::endl;
-    std::cout  << "\t\t\t" << "Texture compression ETC2 support: " << deviceFeatures.textureCompressionETC2 << std::endl;
-    std::cout  << "\t\t\t" << "Shader storage image extended formats support: " << deviceFeatures.shaderStorageImageExtendedFormats << std::endl;
-    std::cout  << "\t\t\t" << "Shader storage image read without format support: " << deviceFeatures.shaderStorageImageReadWithoutFormat << std::endl;
-    std::cout  << "\t\t\t" << "Shader storage image write without format support: " << deviceFeatures.shaderStorageImageWriteWithoutFormat << std::endl;
-    std::cout  << "\t\t\t" << "Shader uniform buffer array dynamic indexing support: " << deviceFeatures.shaderUniformBufferArrayDynamicIndexing << std::endl;
-    std::cout  << "\t\t\t" << "Shader sampled image array dynamic indexing support: " << deviceFeatures.shaderSampledImageArrayDynamicIndexing << std::endl;
-    std::cout  << "\t\t\t" << "Shader storage buffer array dynamic indexing support: " << deviceFeatures.shaderStorageBufferArrayDynamicIndexing << std::endl;
-    std::cout  << "\t\t\t" << "Shader storage image array dynamic indexing support: " << deviceFeatures.shaderStorageImageArrayDynamicIndexing << std::endl;
-    std::cout  << "\t\t\t" << "Shader clip distance support: " << deviceFeatures.shaderClipDistance << std::endl;
-    std::cout  << "\t\t\t" << "Shader cull distance support: " << deviceFeatures.shaderCullDistance << std::endl;
-    std::cout  << "\t\t\t" << "Shader float64 support: " << deviceFeatures.shaderFloat64 << std::endl;
-    std::cout  << "\t\t\t" << "Shader int64 support: " << deviceFeatures.shaderInt64 << std::endl;
-    std::cout  << "\t\t\t" << "Shader int16 support: " << deviceFeatures.shaderInt16 << std::endl;
-    std::cout  << "\t\t\t" << "Shader resource residency support: " << deviceFeatures.shaderResourceResidency << std::endl;
+    std::cout << "\t\t"
+              << "Device features:" << std::endl;
+    std::cout << "\t\t\t"
+              << "Geometry shader support: " << deviceFeatures.geometryShader
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Tessellation shader support: "
+              << deviceFeatures.tessellationShader << std::endl;
+    std::cout << "\t\t\t"
+              << "Sampler anisotropy support: "
+              << deviceFeatures.samplerAnisotropy << std::endl;
+    std::cout << "\t\t\t"
+              << "Texture compression BC support: "
+              << deviceFeatures.textureCompressionBC << std::endl;
+    std::cout << "\t\t\t"
+              << "Texture compression ASTC_LDR support: "
+              << deviceFeatures.textureCompressionASTC_LDR << std::endl;
+    std::cout << "\t\t\t"
+              << "Texture compression ETC2 support: "
+              << deviceFeatures.textureCompressionETC2 << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader storage image extended formats support: "
+              << deviceFeatures.shaderStorageImageExtendedFormats << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader storage image read without format support: "
+              << deviceFeatures.shaderStorageImageReadWithoutFormat
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader storage image write without format support: "
+              << deviceFeatures.shaderStorageImageWriteWithoutFormat
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader uniform buffer array dynamic indexing support: "
+              << deviceFeatures.shaderUniformBufferArrayDynamicIndexing
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader sampled image array dynamic indexing support: "
+              << deviceFeatures.shaderSampledImageArrayDynamicIndexing
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader storage buffer array dynamic indexing support: "
+              << deviceFeatures.shaderStorageBufferArrayDynamicIndexing
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader storage image array dynamic indexing support: "
+              << deviceFeatures.shaderStorageImageArrayDynamicIndexing
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader clip distance support: "
+              << deviceFeatures.shaderClipDistance << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader cull distance support: "
+              << deviceFeatures.shaderCullDistance << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader float64 support: " << deviceFeatures.shaderFloat64
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader int64 support: " << deviceFeatures.shaderInt64
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader int16 support: " << deviceFeatures.shaderInt16
+              << std::endl;
+    std::cout << "\t\t\t"
+              << "Shader resource residency support: "
+              << deviceFeatures.shaderResourceResidency << std::endl;
 #endif
 
     /*
@@ -174,18 +231,20 @@ class HelloTriangleApplication {
      * This is where we would check for device suitability
      * For example:
      *
-     * return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
-     *     deviceFeatures.geometryShader;
+     * return deviceProperties.deviceType ==
+     * VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && deviceFeatures.geometryShader;
      *
      * We will just return true for now
      */
-    return true;
+    QueueFamilyIndices indices = findQueueFamilies(device);
+
+    return indices.graphicsFamily.has_value();
   }
 
   void pickPhysicalDevice() {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-    if ( deviceCount == 0) {
+    if (deviceCount == 0) {
       throw std::runtime_error("failed to find GPUs with Vulkan support!");
     }
     std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -200,10 +259,7 @@ class HelloTriangleApplication {
     if (physicalDevice == VK_NULL_HANDLE) {
       throw std::runtime_error("failed to find a suitable GPU!");
     }
-
-    
   }
-
 
   void initVulkan() {
     createInstance();
@@ -337,7 +393,8 @@ class HelloTriangleApplication {
     return VK_FALSE;
   }
 
-  void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
+  void populateDebugMessengerCreateInfo(
+      VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
     createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     createInfo.messageSeverity =
@@ -349,6 +406,55 @@ class HelloTriangleApplication {
                              VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
                              VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
     createInfo.pfnUserCallback = debugCallback;
+  }
+
+  QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
+    QueueFamilyIndices indices;
+
+    // Logic to find queue family indices to populate struct with
+
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount,
+                                             nullptr);
+
+    std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount,
+                                             queueFamilies.data());
+
+    uint32_t i = 0;
+
+#if VERBOSE_LOGGING
+    std::cout << "Queue families found: " << queueFamilyCount << std::endl;
+#endif
+    for (const auto& queueFamily : queueFamilies) {
+#if VERBOSE_LOGGING
+        std::cout << "Queue family " << i << std::endl;
+        std::cout << "\t"
+                  << "Queue count: " << queueFamilies[i].queueCount
+                  << std::endl;
+        std::cout << "\t"
+                  << "Queue flags: " << queueFamilies[i].queueFlags
+                  << std::endl;
+        std::cout << "\t"
+                  << "Timestamp valid bits: "
+                  << queueFamilies[i].timestampValidBits << std::endl;
+        std::cout << "\t"
+                  << "Min image transfer granularity: ("
+                  << queueFamilies[i].minImageTransferGranularity.width << ", "
+                  << queueFamilies[i].minImageTransferGranularity.height << ", "
+                  << queueFamilies[i].minImageTransferGranularity.depth << ")"
+                  << std::endl;
+        std::cout << "\t"
+                  << "Queue Flag [VK_QUEUE_GRAPHICS_BIT]: " << static_cast<bool>(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) << std::endl;
+#endif
+      if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+        indices.graphicsFamily = i;
+      }
+
+      i++;
+    }
+
+    return indices;
   }
 };
 
