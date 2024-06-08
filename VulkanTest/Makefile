@@ -37,7 +37,7 @@ hello-triangle: #hello-triangle.cpp
 	@echo "CFLAGS: $(CFLAGS)"
 	$(CURRENT_COMPILER) $(CFLAGS) -o hello-triangle hello-triangle.cpp $(LDFLAGS)
 
-02_validation_layers: #
+validation-layers: #
 	@echo "Compiling 02_validation_layers.cpp"
 	@echo "Compiling with $(CURRENT_COMPILER)"
 	@echo "CFLAGS: $(CFLAGS)"
